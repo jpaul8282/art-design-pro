@@ -4,7 +4,7 @@
 
     <div class="right-wrap">
       <div class="top-right-wrap">
-        <div class="btn theme-btn" @click="toggleTheme">
+        <div class="btn theme-btn" @click="themeAnimation">
           <i class="iconfont-sys">
             {{ isDark ? '&#xe6b5;' : '&#xe725;' }}
           </i>
@@ -65,6 +65,7 @@
                 type="password"
                 radius="8px"
                 autocomplete="off"
+                show-password
               />
             </ElFormItem>
             <div class="drag-verify">
@@ -72,7 +73,6 @@
                 <ArtDragVerify
                   ref="dragVerify"
                   v-model:value="isPassing"
-                  :width="width < 500 ? 328 : 438"
                   :text="$t('login.sliderText')"
                   textColor="var(--art-gray-800)"
                   :successText="$t('login.sliderSuccessText')"
@@ -121,14 +121,15 @@
 <script setup lang="ts">
   import AppConfig from '@/config'
   import { RoutesAlias } from '@/router/routesAlias'
-  import { ElMessage, ElNotification } from 'element-plus'
+  import { ElNotification, ElMessage } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
-  import { HOME_PAGE } from '@/router/routesAlias'
-  import { ApiStatus } from '@/utils/http/status'
   import { getCssVar } from '@/utils/ui'
   import { languageOptions } from '@/locales'
-  import { LanguageEnum, SystemThemeEnum } from '@/enums/appEnum'
+  import { LanguageEnum } from '@/enums/appEnum'
   import { useI18n } from 'vue-i18n'
+  import { HttpError } from '@/utils/http/error'
+  import { themeAnimation } from '@/utils/theme/animation'
+  import { UserService } from '@/api/usersApi'
 
   defineOptions({ name: 'Login' })
 
@@ -171,7 +172,7 @@
   ])
 
   const settingStore = useSettingStore()
-  const { isDark, systemThemeType } = storeToRefs(settingStore)
+  const { isDark } = storeToRefs(settingStore)
 
   const dragVerify = ref()
 
@@ -196,7 +197,6 @@
   }))
 
   const loading = ref(false)
-  const { width } = useWindowSize()
 
   onMounted(() => {
     setupAccount('super')
@@ -210,56 +210,58 @@
     formData.password = selectedAccount?.password ?? ''
   }
 
+  // 登录
   const handleSubmit = async () => {
     if (!formRef.value) return
 
-    await formRef.value.validate(async (valid) => {
-      if (valid) {
-        if (!isPassing.value) {
-          isClickPass.value = true
-          return
-        }
+    try {
+      // 表单验证
+      const valid = await formRef.value.validate()
+      if (!valid) return
 
-        loading.value = true
-
-        const params = {
-          userName: formData.username,
-          password: formData.password
-        }
-
-        try {
-          const res = await UserService.login(params)
-
-          if (res.code === ApiStatus.success) {
-            const { token, refreshToken } = res.data
-
-            if (token) {
-              userStore.setToken(token, refreshToken)
-              const res = await UserService.getUserInfo()
-
-              // 设置登录状态
-              userStore.setLoginStatus(true)
-              // 登录成功提示
-              showLoginSuccessNotice()
-
-              if (res.code === ApiStatus.success) {
-                userStore.setUserInfo(res.data)
-                userStore.setLoginStatus(true)
-                router.push(HOME_PAGE)
-              } else {
-                ElMessage.error(res.msg)
-              }
-            }
-          } else {
-            loading.value = false
-            resetDragVerify()
-          }
-        } finally {
-          loading.value = false
-          resetDragVerify()
-        }
+      // 拖拽验证
+      if (!isPassing.value) {
+        isClickPass.value = true
+        return
       }
-    })
+
+      loading.value = true
+
+      // 登录请求
+      const { username, password } = formData
+
+      const { token, refreshToken } = await UserService.login({
+        userName: username,
+        password
+      })
+
+      // 验证token
+      if (!token) {
+        throw new Error('Login failed - no token received')
+      }
+
+      // 存储token和用户信息
+      userStore.setToken(token, refreshToken)
+      const userInfo = await UserService.getUserInfo()
+      userStore.setUserInfo(userInfo)
+      userStore.setLoginStatus(true)
+
+      // 登录成功处理
+      showLoginSuccessNotice()
+      router.push('/')
+    } catch (error) {
+      // 处理 HttpError
+      if (error instanceof HttpError) {
+        // console.log(error.code)
+      } else {
+        // 处理非 HttpError
+        ElMessage.error('登录失败，请稍后重试')
+        console.error('[Login] Unexpected error:', error)
+      }
+    } finally {
+      loading.value = false
+      resetDragVerify()
+    }
   }
 
   // 重置拖拽验证
@@ -287,15 +289,6 @@
     if (locale.value === lang) return
     locale.value = lang
     userStore.setLanguage(lang)
-  }
-
-  // 切换主题
-  import { useTheme } from '@/composables/useTheme'
-  import { UserService } from '@/api/usersApi'
-
-  const toggleTheme = () => {
-    let { LIGHT, DARK } = SystemThemeEnum
-    useTheme().switchThemeStyles(systemThemeType.value === LIGHT ? DARK : LIGHT)
   }
 </script>
 

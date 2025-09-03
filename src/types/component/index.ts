@@ -2,8 +2,6 @@
  * 组件相关类型定义
  */
 
-import { Option } from '../common'
-
 // 搜索组件类型
 export type SearchComponentType =
   | 'input'
@@ -28,54 +26,45 @@ export interface SearchChangeParams {
   val: unknown
 }
 
-// 搜索表单项
-export interface SearchFormItem {
-  // 表单项标签
-  label: string
-  // 表单项属性名
-  prop: string
-  // 表单项类型
-  type: SearchComponentType
-  // 每列的宽度（基于 24 格布局）
-  elColSpan?: number
-  // select的选项
-  options?: Option[] | (() => Option[])
-  // 搜索框更改事件
-  onChange?: (changeParams: SearchChangeParams) => void
-  // 额外配置项
-  config?: Record<string, unknown>
-  // 默认值
-  defaultValue?: any
-  // 占位符
-  placeholder?: string
-  // 是否必填
-  required?: boolean
-  // 是否禁用
-  disabled?: boolean
-}
-
-// 表格列配置
-export interface TableColumn {
-  // 列标题
-  label: string
+// 表格列配置接口
+export interface ColumnOption<T = any> {
+  // 列类型
+  type?: 'selection' | 'expand' | 'index' | 'globalIndex'
   // 列属性名
-  prop: string
+  prop?: string
+  // 列标题
+  label?: string
   // 列宽度
-  width?: number | string
-  // 最小宽度
-  minWidth?: number | string
+  width?: string | number
+  // 最小列宽度
+  minWidth?: string | number
+  // 固定列
+  fixed?: boolean | 'left' | 'right'
   // 是否可排序
   sortable?: boolean
-  // 是否固定列
-  fixed?: boolean | 'left' | 'right'
-  // 列对齐方式
-  align?: 'left' | 'center' | 'right'
-  // 自定义渲染
-  formatter?: (row: any, column: any, cellValue: any, index: number) => string
-  // 是否显示
-  show?: boolean
-  // 列类型
-  type?: 'selection' | 'index' | 'expand'
+  // 过滤器选项
+  filters?: any[]
+  // 过滤方法
+  filterMethod?: (value: any, row: any) => boolean
+  // 过滤器位置
+  filterPlacement?: string
+  // 是否禁用
+  disabled?: boolean
+  // 是否选中显示（可用于隐藏列）
+  checked?: boolean
+  // 自定义渲染函数
+  formatter?: (row: T) => any
+  // 插槽相关配置
+  // 是否使用插槽渲染内容
+  useSlot?: boolean
+  // 插槽名称（默认为 prop 值）
+  slotName?: string
+  // 是否使用表头插槽
+  useHeaderSlot?: boolean
+  // 表头插槽名称（默认为 `${prop}-header`）
+  headerSlotName?: string
+  // 其他属性
+  [key: string]: any
 }
 
 // 分页配置

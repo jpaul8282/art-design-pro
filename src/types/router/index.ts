@@ -27,7 +27,7 @@ export interface RouteMeta extends Record<string | number | symbol, unknown> {
   /** 操作权限 */
   authList?: Array<{
     title: string
-    auth_mark: string
+    authMark: string
   }>
   /** 是否为一级菜单 */
   isFirstLevel?: boolean
@@ -35,6 +35,10 @@ export interface RouteMeta extends Record<string | number | symbol, unknown> {
   roles?: string[]
   /** 是否固定标签页 */
   fixedTab?: boolean
+  /** 激活菜单路径 */
+  activePath?: string
+  /** 是否为全屏页面 */
+  isFullPage?: boolean
 }
 
 // 扩展路由记录

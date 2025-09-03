@@ -6,20 +6,36 @@ import { WEB_LINKS } from '@/utils/constants'
  * 菜单列表、异步路由
  *
  * 支持两种模式:
- * 1. 前端静态配置 - 直接使用本文件中定义的路由配置
- * 2. 后端动态配置 - 后端返回菜单数据，前端解析生成路由
+ * 前端静态配置 - 直接使用本文件中定义的路由配置
+ * 后端动态配置 - 后端返回菜单数据，前端解析生成路由
  *
  * 菜单标题（title）:
  * 可以是 i18n 的 key，也可以是字符串，比如：'用户列表'
+ *
+ * 注意事项：
+ * 1、RoutesAlias.Layout 指向的是布局容器，后端返回的菜单数据中，component 字段需要指向 /index/index
+ * 2、path、name 不要和动态路由冲突，否则会导致路由冲突无法访问
  */
 export const asyncRoutes: AppRouteRecord[] = [
+  // 主页一级菜单配置示例：
+  // {
+  //   name: 'Home',
+  //   path: '/home',
+  //   component: RoutesAlias.Dashboard,
+  //   meta: {
+  //     title: 'menus.dashboard.console',
+  //     icon: '&#xe733;',
+  //     keepAlive: false
+  //   }
+  // },
   {
     name: 'Dashboard',
     path: '/dashboard',
-    component: RoutesAlias.Home,
+    component: RoutesAlias.Layout,
     meta: {
       title: 'menus.dashboard.title',
-      icon: '&#xe721;'
+      icon: '&#xe721;',
+      roles: ['R_SUPER', 'R_ADMIN'] // 角色权限，前端控制模式（只有拥有这些角色的用户才能访问）
     },
     children: [
       {
@@ -53,9 +69,84 @@ export const asyncRoutes: AppRouteRecord[] = [
     ]
   },
   {
+    path: '/template',
+    name: 'Template',
+    component: RoutesAlias.Layout,
+    meta: {
+      title: 'menus.template.title',
+      icon: '&#xe860;'
+    },
+    children: [
+      {
+        path: 'cards',
+        name: 'Cards',
+        component: RoutesAlias.Cards,
+        meta: {
+          title: 'menus.template.cards',
+          keepAlive: false
+        }
+      },
+      {
+        path: 'banners',
+        name: 'Banners',
+        component: RoutesAlias.Banners,
+        meta: {
+          title: 'menus.template.banners',
+          keepAlive: false
+        }
+      },
+      {
+        path: 'charts',
+        name: 'Charts',
+        component: RoutesAlias.Charts,
+        meta: {
+          title: 'menus.template.charts',
+          keepAlive: false
+        }
+      },
+      {
+        path: 'map',
+        name: 'Map',
+        component: RoutesAlias.Map,
+        meta: {
+          title: 'menus.template.map',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'chat',
+        name: 'Chat',
+        component: RoutesAlias.Chat,
+        meta: {
+          title: 'menus.template.chat',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'calendar',
+        name: 'Calendar',
+        component: RoutesAlias.Calendar,
+        meta: {
+          title: 'menus.template.calendar',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'pricing',
+        name: 'Pricing',
+        component: RoutesAlias.Pricing,
+        meta: {
+          title: 'menus.template.pricing',
+          keepAlive: true,
+          isFullPage: true // 是否全屏显示
+        }
+      }
+    ]
+  },
+  {
     path: '/widgets',
     name: 'Widgets',
-    component: RoutesAlias.Home,
+    component: RoutesAlias.Layout,
     meta: {
       title: 'menus.widgets.title',
       icon: '&#xe81a;'
@@ -194,74 +285,58 @@ export const asyncRoutes: AppRouteRecord[] = [
     ]
   },
   {
-    path: '/template',
-    name: 'Template',
-    component: RoutesAlias.Home,
+    path: '/examples',
+    name: 'Examples',
+    component: RoutesAlias.Layout,
     meta: {
-      title: 'menus.template.title',
-      icon: '&#xe860;'
+      title: 'menus.examples.title',
+      icon: '&#xe8d4;',
+      showBadge: true
     },
     children: [
       {
-        path: 'cards',
-        name: 'Cards',
-        component: RoutesAlias.Cards,
+        path: 'tabs',
+        name: 'Tabs',
+        component: RoutesAlias.ExamplesTabs,
         meta: {
-          title: 'menus.template.cards',
-          keepAlive: false
+          title: 'menus.examples.tabs'
         }
       },
       {
-        path: 'banners',
-        name: 'Banners',
-        component: RoutesAlias.Banners,
+        path: 'tables/basic',
+        name: 'TablesBasic',
+        component: RoutesAlias.ExamplesTablesBasic,
         meta: {
-          title: 'menus.template.banners',
-          keepAlive: false
-        }
-      },
-      {
-        path: 'charts',
-        name: 'Charts',
-        component: RoutesAlias.Charts,
-        meta: {
-          title: 'menus.template.charts',
-          keepAlive: false
-        }
-      },
-      {
-        path: 'map',
-        name: 'Map',
-        component: RoutesAlias.Map,
-        meta: {
-          title: 'menus.template.map',
+          title: 'menus.examples.tablesBasic',
           keepAlive: true
         }
       },
       {
-        path: 'chat',
-        name: 'Chat',
-        component: RoutesAlias.Chat,
+        path: 'tables',
+        name: 'Tables',
+        component: RoutesAlias.ExamplesTables,
         meta: {
-          title: 'menus.template.chat',
-          keepAlive: true
+          title: 'menus.examples.tables',
+          keepAlive: true,
+          showBadge: true
         }
       },
       {
-        path: 'calendar',
-        name: 'Calendar',
-        component: RoutesAlias.Calendar,
+        path: 'form/search-bar',
+        name: 'SearchBar',
+        component: RoutesAlias.ExamplesSearchBar,
         meta: {
-          title: 'menus.template.calendar',
-          keepAlive: true
+          title: 'menus.examples.searchBar',
+          keepAlive: true,
+          showTextBadge: 'New'
         }
       },
       {
-        path: 'pricing',
-        name: 'Pricing',
-        component: RoutesAlias.Pricing,
+        path: 'tables/tree',
+        name: 'TablesTree',
+        component: RoutesAlias.ExamplesTablesTree,
         meta: {
-          title: 'menus.template.pricing',
+          title: 'menus.examples.tablesTree',
           keepAlive: true
         }
       }
@@ -270,7 +345,7 @@ export const asyncRoutes: AppRouteRecord[] = [
   {
     path: '/system',
     name: 'System',
-    component: RoutesAlias.Home,
+    component: RoutesAlias.Layout,
     meta: {
       title: 'menus.system.title',
       icon: '&#xe7b9;',
@@ -319,15 +394,15 @@ export const asyncRoutes: AppRouteRecord[] = [
           authList: [
             {
               title: '新增',
-              auth_mark: 'add'
+              authMark: 'add'
             },
             {
               title: '编辑',
-              auth_mark: 'edit'
+              authMark: 'edit'
             },
             {
               title: '删除',
-              auth_mark: 'delete'
+              authMark: 'delete'
             }
           ]
         }
@@ -424,7 +499,7 @@ export const asyncRoutes: AppRouteRecord[] = [
   {
     path: '/article',
     name: 'Article',
-    component: RoutesAlias.Home,
+    component: RoutesAlias.Layout,
     meta: {
       title: 'menus.article.title',
       icon: '&#xe7ae;',
@@ -441,11 +516,11 @@ export const asyncRoutes: AppRouteRecord[] = [
           authList: [
             {
               title: '新增',
-              auth_mark: 'add'
+              authMark: 'add'
             },
             {
               title: '编辑',
-              auth_mark: 'edit'
+              authMark: 'edit'
             }
           ]
         }
@@ -458,7 +533,8 @@ export const asyncRoutes: AppRouteRecord[] = [
         meta: {
           title: 'menus.article.articleDetail',
           isHide: true,
-          keepAlive: true
+          keepAlive: true,
+          activePath: '/article/article-list' // 激活菜单路径
         }
       },
       {
@@ -480,7 +556,7 @@ export const asyncRoutes: AppRouteRecord[] = [
           authList: [
             {
               title: '发布',
-              auth_mark: 'article/article-publish/add'
+              authMark: 'article/article-publish/add'
             }
           ]
         }
@@ -490,7 +566,7 @@ export const asyncRoutes: AppRouteRecord[] = [
   {
     path: '/result',
     name: 'Result',
-    component: RoutesAlias.Home,
+    component: RoutesAlias.Layout,
     meta: {
       title: 'menus.result.title',
       icon: '&#xe715;'
@@ -519,7 +595,7 @@ export const asyncRoutes: AppRouteRecord[] = [
   {
     path: '/exception',
     name: 'Exception',
-    component: RoutesAlias.Home,
+    component: RoutesAlias.Layout,
     meta: {
       title: 'menus.exception.title',
       icon: '&#xe820;'
@@ -531,7 +607,8 @@ export const asyncRoutes: AppRouteRecord[] = [
         component: RoutesAlias.Exception403,
         meta: {
           title: 'menus.exception.forbidden',
-          keepAlive: true
+          keepAlive: true,
+          isFullPage: true
         }
       },
       {
@@ -540,7 +617,8 @@ export const asyncRoutes: AppRouteRecord[] = [
         component: RoutesAlias.Exception404,
         meta: {
           title: 'menus.exception.notFound',
-          keepAlive: true
+          keepAlive: true,
+          isFullPage: true
         }
       },
       {
@@ -549,7 +627,8 @@ export const asyncRoutes: AppRouteRecord[] = [
         component: RoutesAlias.Exception500,
         meta: {
           title: 'menus.exception.serverError',
-          keepAlive: true
+          keepAlive: true,
+          isFullPage: true
         }
       }
     ]
@@ -558,7 +637,7 @@ export const asyncRoutes: AppRouteRecord[] = [
   {
     path: '/safeguard',
     name: 'Safeguard',
-    component: RoutesAlias.Home,
+    component: RoutesAlias.Layout,
     meta: {
       title: 'menus.safeguard.title',
       icon: '&#xe816;',
@@ -577,27 +656,16 @@ export const asyncRoutes: AppRouteRecord[] = [
     ]
   },
   {
-    name: 'Help',
-    path: '/help',
-    component: RoutesAlias.Home,
+    name: 'Document',
+    path: '',
+    component: RoutesAlias.ChangeLog,
     meta: {
-      title: 'menus.help.title',
-      icon: '&#xe719;',
-      keepAlive: false,
-      roles: ['R_SUPER', 'R_ADMIN']
-    },
-    children: [
-      {
-        path: '',
-        name: 'Document',
-        meta: {
-          title: 'menus.help.document',
-          link: WEB_LINKS.DOCS,
-          isIframe: false,
-          keepAlive: false
-        }
-      }
-    ]
+      title: 'menus.help.document',
+      icon: '&#xe73e;',
+      link: WEB_LINKS.DOCS,
+      isIframe: false,
+      keepAlive: false
+    }
   },
   // 一级菜单
   {

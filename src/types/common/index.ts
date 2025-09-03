@@ -9,7 +9,7 @@ export type Status = 0 | 1 // 0: 禁用, 1: 启用
 export type Gender = 'male' | 'female' | 'unknown'
 
 // 排序方向
-export type SortOrder = 'asc' | 'desc'
+export type SortOrder = 'ascending' | 'descending'
 
 // 操作类型
 export type ActionType = 'create' | 'update' | 'delete' | 'view'
@@ -22,14 +22,6 @@ export type KeyValue<T = any> = {
   key: string
   value: T
   label?: string
-}
-
-// 选项类型
-export interface Option {
-  label: string
-  value: string | number
-  disabled?: boolean
-  children?: Option[]
 }
 
 // 时间范围类型

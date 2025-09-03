@@ -1,39 +1,51 @@
 <template>
   <div class="page-content state-page">
     <div class="tips">
-      <img :src="data.imgUrl" />
+      <ThemeSvg :src="data.imgUrl" size="100%" />
       <div class="right-wrap">
         <p>{{ data.desc }}</p>
-        <el-button color="#47A7FF" @click="backHome" v-ripple>{{ data.btnText }}</el-button>
+        <el-button type="primary" size="large" @click="backHome" v-ripple>{{
+          data.btnText
+        }}</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { HOME_PAGE } from '@/router/routesAlias'
+  import { useCommon } from '@/composables/useCommon'
+
   const router = useRouter()
 
-  defineProps({
-    data: {
-      type: Object as PropType<{
-        title: string
-        desc: string
-        btnText: string
-        imgUrl: string
-      }>,
-      required: true
-    }
-  })
+  interface ExceptionData {
+    /** 标题 */
+    title: string
+    /** 描述 */
+    desc: string
+    /** 按钮文本 */
+    btnText: string
+    /** 图片地址 */
+    imgUrl: string
+  }
+
+  withDefaults(
+    defineProps<{
+      data: ExceptionData
+    }>(),
+    {}
+  )
 
   const backHome = () => {
-    router.push(HOME_PAGE)
+    router.push(useCommon().homePath.value)
   }
 </script>
 
 <style lang="scss" scoped>
   .state-page {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
     background-color: transparent !important;
     border: 0 !important;
 
@@ -41,8 +53,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding-bottom: 5vh;
-      margin: auto;
 
       img {
         width: 300px;
@@ -50,7 +60,7 @@
 
       .right-wrap {
         width: 300px;
-        margin-left: 100px;
+        margin-left: 60px;
 
         p {
           font-size: 20px;

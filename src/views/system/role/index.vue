@@ -1,17 +1,21 @@
 <template>
   <div class="page-content">
-    <ElRow>
-      <ElCol :xs="24" :sm="12" :lg="6">
-        <ElInput placeholder="部门名称"></ElInput>
-      </ElCol>
-      <div style="width: 12px"></div>
-      <ElCol :xs="24" :sm="12" :lg="6" class="el-col2">
-        <ElButton v-ripple>搜索</ElButton>
-        <ElButton @click="showDialog('add')" v-ripple>新增角色</ElButton>
-      </ElCol>
-    </ElRow>
-
-    <ArtTable :data="roleList" index>
+    <ElForm>
+      <ElRow :gutter="12">
+        <ElCol :xs="24" :sm="12" :lg="6">
+          <ElFormItem>
+            <ElInput placeholder="请输入角色名称" v-model="form.roleName"></ElInput>
+          </ElFormItem>
+        </ElCol>
+        <ElCol :xs="24" :sm="12" :lg="6">
+          <ElFormItem>
+            <ElButton v-ripple>搜索</ElButton>
+            <ElButton @click="showDialog('add')" v-ripple>新增角色</ElButton>
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+    </ElForm>
+    <ArtTable :data="roleList">
       <template #default>
         <ElTableColumn label="角色名称" prop="roleName" />
         <ElTableColumn label="角色编码" prop="roleCode" />
@@ -28,20 +32,18 @@
             {{ formatDate(scope.row.date) }}
           </template>
         </ElTableColumn>
-        <ElTableColumn fixed="right" label="操作" width="200px">
+        <ElTableColumn fixed="right" label="操作" width="100px">
           <template #default="scope">
             <ElRow>
-              <el-button link @click="showPermissionDialog()"> 菜单权限 </el-button>
-              <el-button link @click="showDialog('edit', scope.row)"> 编辑 </el-button>
-              <el-button link @click="deleteRole()"> 删除 </el-button>
-              <!-- <ArtButtonMore
+              <!-- 可以在 list 中添加 auth 属性来控制按钮的权限, auth 属性值为权限标识 -->
+              <ArtButtonMore
                 :list="[
                   { key: 'permission', label: '菜单权限' },
                   { key: 'edit', label: '编辑角色' },
                   { key: 'delete', label: '删除角色' }
                 ]"
                 @click="buttonMoreClick($event, scope.row)"
-              /> -->
+              />
             </ElRow>
           </template>
         </ElTableColumn>
@@ -122,8 +124,8 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { formatMenuTitle } from '@/router/utils/utils'
-  // import { ButtonMoreItem } from '@/components/core/forms/ArtButtonMore.vue'
   import { Role, ROLE_LIST_DATA } from '@/mock/temp/formData'
+  import { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
 
   defineOptions({ name: 'Role' })
 
@@ -142,10 +144,10 @@
       // 如果有 authList，将其转换为子节点
       if (node.meta && node.meta.authList && node.meta.authList.length) {
         const authNodes = node.meta.authList.map((auth: any) => ({
-          id: `${node.id}_${auth.auth_mark}`,
-          name: `${node.name}_${auth.auth_mark}`,
+          id: `${node.id}_${auth.authMark}`,
+          name: `${node.name}_${auth.authMark}`,
           label: auth.title,
-          auth_mark: auth.auth_mark,
+          authMark: auth.authMark,
           isAuth: true,
           checked: auth.checked || false
         }))
@@ -213,15 +215,15 @@
     }
   }
 
-  // const buttonMoreClick = (item: ButtonMoreItem, row: any) => {
-  //   if (item.key === 'permission') {
-  //     showPermissionDialog()
-  //   } else if (item.key === 'edit') {
-  //     showDialog('edit', row)
-  //   } else if (item.key === 'delete') {
-  //     deleteRole()
-  //   }
-  // }
+  const buttonMoreClick = (item: ButtonMoreItem, row: any) => {
+    if (item.key === 'permission') {
+      showPermissionDialog()
+    } else if (item.key === 'edit') {
+      showDialog('edit', row)
+    } else if (item.key === 'delete') {
+      deleteRole()
+    }
+  }
 
   const showPermissionDialog = () => {
     permissionDialog.value = true

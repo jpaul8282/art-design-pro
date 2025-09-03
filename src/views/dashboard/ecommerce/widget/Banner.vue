@@ -1,26 +1,45 @@
 <template>
   <ArtBasicBanner
     class="banner"
+    height="13.3rem"
     :title="`欢迎回来 ${userInfo.userName}`"
-    :showButton="false"
     backgroundColor="var(--el-color-primary-light-9)"
     titleColor="var(--art-gray-900)"
-    subtitleColor="#666"
-    style="height: 13.3rem"
-    :backgroundImage="bannerCover"
-    :showDecoration="false"
-    imgWidth="18rem"
-    imgBottom="-7.5rem"
-    :showMeteors="true"
+    :decoration="false"
+    :meteorConfig="{
+      enabled: true,
+      count: 10
+    }"
+    :buttonConfig="{
+      show: false,
+      text: ''
+    }"
+    :imageConfig="{
+      src: bannerCover,
+      width: '18rem',
+      bottom: '-7.5rem'
+    }"
     @click="handleBannerClick"
   >
     <div class="banner-slot">
       <div class="item">
-        <p class="title">¥2,340<i class="iconfont-sys text-success">&#xe8d5;</i></p>
+        <p class="title">
+          <ArtCountTo
+            class="number box-title"
+            :target="2340"
+            :duration="1500"
+            prefix="¥"
+            separator=","
+          />
+          <i class="iconfont-sys text-success">&#xe8d5;</i>
+        </p>
         <p class="subtitle">今日销售额</p>
       </div>
       <div class="item">
-        <p class="title">35%<i class="iconfont-sys text-success">&#xe8d5;</i></p>
+        <p class="title">
+          <ArtCountTo class="number box-title" :target="35" :duration="1500" suffix="%" />
+          <i class="iconfont-sys text-success">&#xe8d5;</i>
+        </p>
         <p class="subtitle">较昨日</p>
       </div>
     </div>
@@ -39,8 +58,11 @@
 
 <style lang="scss" scoped>
   .banner {
+    justify-content: center;
+
     .banner-slot {
       display: flex;
+      margin-top: 24px;
 
       .item {
         margin-right: 30px;

@@ -1,8 +1,10 @@
 /**
  * 路由别名，方便快速找到页面，同时可以用作路由跳转
  */
+
+/** 路由别名 */
 export enum RoutesAlias {
-  Home = '/index/index', // 布局容器
+  Layout = '/index/index', // 布局容器
   Login = '/auth/login', // 登录
   Register = '/auth/register', // 注册
   ForgetPassword = '/auth/forget-password', // 忘记密码
@@ -47,8 +49,10 @@ export enum RoutesAlias {
   NestedMenu31 = '/system/nested/menu3', // 嵌套菜单3-1
   NestedMenu321 = '/system/nested/menu3/menu3-2', // 嵌套菜单3-2-1
   Server = '/safeguard/server', // 服务器
-  ChangeLog = '/change/log' // 更新日志
+  ChangeLog = '/change/log', // 更新日志
+  ExamplesTabs = '/examples/tabs', // 标签页
+  ExamplesTablesBasic = '/examples/tables/basic', // 基础表格示例
+  ExamplesTables = '/examples/tables', // 高级表格示例
+  ExamplesTablesTree = '/examples/tables/tree', // 左右布局表格示例
+  ExamplesSearchBar = '/examples/forms/search-bar' // 搜索表单示例
 }
-
-// 主页路由
-export const HOME_PAGE = RoutesAlias.Dashboard

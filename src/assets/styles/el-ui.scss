@@ -17,12 +17,50 @@
   // 边框、按钮圆角...
   --el-border-radius-base: calc(var(--custom-radius) / 3 + 2px) !important;
 
-  --el-border-radius-small: 10px !important;
-  --el-messagebox-border-radius: 10px !important;
+  --el-border-radius-small: calc(var(--custom-radius) / 3 + 4px) !important;
+  --el-messagebox-border-radius: calc(var(--custom-radius) / 3 + 4px) !important;
+  --el-popover-border-radius: calc(var(--custom-radius) / 3 + 4px) !important;
 
   .region .el-radio-button__original-radio:checked + .el-radio-button__inner {
     color: var(--main-color);
   }
+}
+
+// 日期选择器
+.el-date-range-picker {
+  --el-datepicker-inrange-bg-color: rgba(var(--art-gray-200-rgb), 0.6) !important;
+}
+
+// el-card 背景色跟系统背景色保持一致
+html.dark .el-card {
+  --el-card-bg-color: var(--art-main-bg-color) !important;
+}
+
+// 修改 el-pagination 大小
+.el-pagination--default {
+  & {
+    --el-pagination-button-width: 32px !important;
+    --el-pagination-button-height: var(--el-pagination-button-width) !important;
+  }
+
+  @media (max-width: $device-ipad-pro) {
+    & {
+      --el-pagination-button-width: 28px !important;
+    }
+  }
+
+  .el-select--default .el-select__wrapper {
+    min-height: var(--el-pagination-button-width) !important;
+  }
+
+  .el-pagination__jump .el-input {
+    height: var(--el-pagination-button-width) !important;
+  }
+}
+
+.el-pager li {
+  padding: 0 10px !important;
+  // border: 1px solid red !important;
 }
 
 // 优化菜单折叠展开动画（提升动画流畅度）
@@ -108,7 +146,7 @@
   }
 }
 
-// ✅ el-message 样式优化
+// el-message 样式优化
 .el-message {
   background-color: var(--art-main-bg-color) !important;
   border: 0 !important;
@@ -210,31 +248,66 @@
   }
 }
 
+.el-radio--default {
+  // 优化单选按钮大小
+  .el-radio__input {
+    .el-radio__inner {
+      width: 16px;
+      height: 16px;
+
+      &::after {
+        width: 6px;
+        height: 6px;
+      }
+    }
+  }
+}
+
 .el-checkbox {
   .el-checkbox__inner {
-    width: 18px !important;
-    height: 18px !important;
+    border-radius: 2px !important;
+  }
+}
+
+// 优化复选框样式
+.el-checkbox--default {
+  .el-checkbox__inner {
+    width: 16px !important;
+    height: 16px !important;
     border-radius: 4px !important;
 
     &::before {
       content: '';
-      height: 3px !important;
-      top: 6px !important;
+      height: 4px !important;
+      top: 5px !important;
       background-color: #fff !important;
       transform: scale(0.6) !important;
     }
 
-    &::after {
-      width: 4px;
-      height: 8px;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 4px;
-      margin: auto;
-      border: 2px solid var(--el-checkbox-checked-icon-color);
-      border-left: 0;
-      border-top: 0;
+    // &::after {
+    //   width: 3px;
+    //   height: 8px;
+    //   margin: auto;
+    //   border: 2px solid var(--el-checkbox-checked-icon-color);
+    //   border-left: 0;
+    //   border-top: 0;
+    //   transform: translate(-45%, -60%) rotate(45deg) scale(0.86) !important;
+    //   transform-origin: center;
+    // }
+  }
+
+  .is-checked {
+    .el-checkbox__inner {
+      &::after {
+        width: 3px;
+        height: 8px;
+        margin: auto;
+        border: 2px solid var(--el-checkbox-checked-icon-color);
+        border-left: 0;
+        border-top: 0;
+        transform: translate(-45%, -60%) rotate(45deg) scale(0.86) !important;
+        transform-origin: center;
+      }
     }
   }
 }
@@ -295,7 +368,7 @@
 
 // 修改 dialog 动画
 .dialog-fade-enter-active {
-  .el-dialog {
+  .el-dialog:not(.is-draggable) {
     animation: dialog-open 0.3s cubic-bezier(0.32, 0.14, 0.15, 0.86);
 
     // 修复 el-dialog 动画后宽度不自适应问题
@@ -308,8 +381,8 @@
 .dialog-fade-leave-active {
   animation: fade-out 0.2s linear;
 
-  .el-dialog {
-    animation: dialog-close 0.2s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+  .el-dialog:not(.is-draggable) {
+    animation: dialog-close 0.5s;
   }
 }
 
@@ -358,15 +431,19 @@
       line-height: 34px !important;
       border-radius: 6px !important;
 
+      &.is-hovering {
+        background-color: transparent !important;
+      }
+
       &.is-selected {
         color: var(--art-gray-900) !important;
         font-weight: 400 !important;
-        background-color: var(--art-gray-200) !important;
+        background-color: rgba(var(--art-gray-200-rgb), 0.8) !important;
         margin-bottom: 4px !important;
       }
 
       &:hover {
-        background-color: var(--art-gray-200) !important;
+        background-color: rgba(var(--art-gray-200-rgb), 0.8) !important;
       }
     }
 
@@ -399,4 +476,16 @@
 .el-button > span {
   position: relative;
   z-index: 10;
+}
+
+// 优化颜色选择器圆角
+.el-color-picker__color {
+  border-radius: 2px !important;
+}
+
+// 优化日期时间选择器底部圆角
+.el-picker-panel {
+  .el-picker-panel__footer {
+    border-radius: 0 0 var(--el-border-radius-base) var(--el-border-radius-base);
+  }
 }
